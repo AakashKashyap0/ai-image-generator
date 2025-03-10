@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Generator</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #blinking-name {
+            font-size: 40px;
+            font-weight: bold;
+            animation: blink 1s infinite alternate;
+        }
+        @keyframes blink {
+            0% { color: red; }
+            25% { color: blue; }
+            50% { color: green; }
+            75% { color: yellow; }
+            100% { color: pink; }
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            font-size: 18px;
+            background-color: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: darkblue;
+        }
+        #image-container {
+            margin-top: 20px;
+        }
+        img {
+            width: 80%;
+            max-width: 500px;
+            border: 5px solid white;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="blinking-name">Hacker Aakash</div>
+
+    <input type="text" id="image-text" placeholder="Enter image description">
+    <button onclick="generateImage()">Generate Image</button>
+
+    <div id="image-container"></div>
+
+    <script>
+        async function generateImage() {
+            let text = document.getElementById("image-text").value;
+            if (text.trim() === "") {
+                alert("Please enter an image description!");
+                return;
+            }
+
+            let apiKey = "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"; // ⚠️ Yaha apni OpenAI API key daalo
+
+            let response = await fetch("https://api.openai.com/v1/images/generations", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    prompt: text,
+                    n: 1,
+                    size: "512x512"
+                })
+            });
+
+            let data = await response.json();
+            if (data.error) {
+                alert("Error: " + data.error.message);
+                return;
+            }
+
+            let imgElement = document.createElement("img");
+            imgElement.src = data.data[0].url;
+            imgElement.alt = text;
+
+            let container = document.getElementById("image-container");
+            container.innerHTML = "";
+            container.appendChild(imgElement);
+        }
+    </script>
+
+</body>
+</html>
